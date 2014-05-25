@@ -1,8 +1,8 @@
 #include <SPI.h>
 #include <WiFi.h>
 
-char ssid[] = "LOZI"; 
-char pass[] = "kjnhkHungvl1";
+char ssid[] = "G2"; 
+char pass[] = "cubin123";
 int keyIndex = 0;
 
 int status = WL_IDLE_STATUS;
@@ -71,7 +71,7 @@ void setup() {
   Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
   if (connectToCenter(server, 3005)) {
-    client.println("Hello sir!!!");
+    //client.println("Hello sir!!!");
   }
 }
 
