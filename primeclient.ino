@@ -145,7 +145,7 @@ void control(String signal)
 
 void polling()
 {
-  webSocketClient.sendData("ping");
+    webSocketClient.sendData("ping");
 }
 
 bool connectToCenter(char host[], int port)
