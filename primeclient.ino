@@ -145,7 +145,7 @@ void control(String signal)
 
 void polling()
 {
-    webSocketClient.sendData("ping", 0);
+    webSocketClient.sendData("ping", 1);
 }
 
 bool connectToCenter(char host[], int port)
@@ -163,7 +163,7 @@ bool connectToCenter(char host[], int port)
   
   if (webSocketClient.handshake(client)) {
     Serial.println("Handshake successful");
-    webSocketClient.sendData("iamrobot", 0);
+    webSocketClient.sendData("iamrobot", 1);
   } else {
     Serial.println("Handshake failed.");
     return false;  
