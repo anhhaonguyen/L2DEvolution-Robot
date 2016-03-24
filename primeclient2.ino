@@ -1,8 +1,8 @@
 #include <SPI.h>
 #include <WiFi.h>
 #include <PWM.h>
-#include "SoftReset.h"
 #include "WebSocketClient.h"
+#include "SoftReset.h"
 
 int wheel1 = 1; int wheel1Enable = 40; int wheel1PWM = 3;
 int wheel2 = 2; int wheel2Enable = 36; int wheel2PWM = 9;
@@ -13,12 +13,13 @@ int wheelRatio = 224;
 
 int serverPort = 9000;
 
-char ssid[] = "Mr.Ka-2.4GHz";
+char ssid[] = "UDANO";
 char pass[] = "10000001";
 int keyIndex = 0;
 
 int status = WL_IDLE_STATUS;
-char server[] = "188.166.225.139";
+char serverSG[] = "haonguyen.me";
+char serverVN[] = "103.7.41.111";
 
 WiFiClient client;
 WebSocketClient webSocketClient;
@@ -73,45 +74,50 @@ void setup() {
   }
   //Serial.println("Connected to wifi");
   printWifiStatus();
-
+  
   //Serial.println("\nStarting connection to server...");
   // if you get a connection, report back via serial:
-  connectToCenter(server, serverPort);
-  
+  connectToCenter(serverVN, serverPort);
   //pinMode(5, OUTPUT); //save for terminator
 }
 
 void loop() {
   
   String data;
-
-  if (client.connected()) {
-    webSocketClient.getData(data, NULL);
-    if (data.length() > 0) {
-      Serial.println(data);
-      if(validateData(data)) {
-        control(data);
-      }
-    } else {
-//      polling();
-//      Serial.println(data);
-    }
-  } else {
+  if (status!=WL_CONNECTED) {
     stopAll();
-    Serial.println('Disconnect!');
-    connectToCenter(server, serverPort);
-  }  
-  
+    setup();
+  } else {
+    if (client.connected()) {
+      webSocketClient.getData(data, NULL);
+      if (data.length()>0) {
+        if(validateData(data)) {
+          Serial.println(data);
+          control(data);
+        } else if (data=="ping") {
+          // polling
+          Serial.println(data);
+        } else if (data=="iamrobot") {
+          Serial.println(data);
+        }
+      } else {
+        polling();
+      } 
+    } else {
+      stopAll();
+      connectToCenter(serverVN, serverPort);
+    }
+  }
 }
 
 void polling()
 {
-    webSocketClient.sendData("ping", 1);
+  webSocketClient.sendData("ping", 1);
 }
 
 bool connectToCenter(char host[], int port)
 {
- if (client.connect("188.166.225.139", serverPort)) {
+ if (client.connect(serverVN, serverPort)) {
     Serial.println("Connected");
   } else {
     Serial.println("Connection failed.");
@@ -120,7 +126,7 @@ bool connectToCenter(char host[], int port)
 
   // Handshake with the server
   webSocketClient.path = "/";
-  webSocketClient.host = "188.166.225.139";
+  webSocketClient.host = serverVN;
   
   if (webSocketClient.handshake(client)) {
     Serial.println("Handshake successful");
@@ -167,10 +173,11 @@ void control(String signal)
      return;
    }
    if (signal=="1") {
+     // 45
      rotateClockwise(wheel1);
-     rotateClockwise(wheel2);
-     rotateCounterClockwise(wheel3);
-     rotateClockwise(wheel4);
+//     rotateClockwise(wheel2);
+//     rotateClockwise(wheel3);
+     rotateCounterClockwise(wheel4);
      return;
    }
    if (signal=="2") {
@@ -181,10 +188,11 @@ void control(String signal)
      return;
    }
    if (signal=="3") {
-     rotateCounterClockwise(wheel1);
-     rotateCounterClockwise(wheel2);
+     //45U
+//     rotateCounterClockwise(wheel1);
+     rotateClockwise(wheel2);
      rotateClockwise(wheel3);
-     rotateCounterClockwise(wheel4);
+//     rotateCounterClockwise(wheel4);
      return;
    }
    if (signal=="4") {
